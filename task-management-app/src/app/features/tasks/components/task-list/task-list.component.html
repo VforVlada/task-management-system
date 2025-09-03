@@ -1,0 +1,30 @@
+<nb-card>
+  <nb-card-header class="flex items-center justify-between">
+    <h2 class="m-0">Tasks</h2>
+    <a routerLink="new" nbButton status="primary" size="small">
+      <nb-icon icon="plus-outline"></nb-icon>
+      New Task
+    </a>
+  </nb-card-header>
+
+  <nb-card-body>
+    <nb-list *ngIf="(store.tasks$ | async) as tasks; else loading">
+      <nb-list-item *ngFor="let t of tasks">
+        <div class="flex items-center justify-between w-full">
+          <a [routerLink]="t.id" class="no-underline">
+            <strong>{{ t.name }}</strong>
+            <div class="text-sm opacity-70">
+              t.state
+              created {{ t.createdAt | date:'short' }}
+              updated {{ t.updatedAt | date:'short' }}
+            </div>
+          </a>
+        </div>
+      </nb-list-item>
+    </nb-list>
+
+    <ng-template #loading>
+      <div class="p-4 text-center opacity-70">Loading…</div>
+    </ng-template>
+  </nb-card-body>
+</nb-card>

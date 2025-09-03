@@ -4,4 +4,8 @@
 
 @include nb-install() {
   @include nb-theme-global();
+
+  body {
+    font-family: 'Roboto', sans-serif;
+  }
 }

@@ -1,0 +1,25 @@
+<nb-card>
+  <nb-card-header class="flex items-center justify-between">
+    <h2 class="m-0">Users</h2>
+    <a routerLink="new" nbButton status="primary" size="small">
+      <nb-icon icon="plus-outline"></nb-icon>
+      New User
+    </a>
+  </nb-card-header>
+
+  <nb-card-body>
+    <nb-list *ngIf="(store.users$ | async) as users; else loading">
+      <nb-list-item *ngFor="let u of users">
+        <div class="flex items-center justify-between w-full">
+          <a [routerLink]="u.id" class="no-underline">
+            <strong>{{ u.name }}</strong>
+          </a>
+        </div>
+      </nb-list-item>
+    </nb-list>
+
+    <ng-template #loading>
+      <div class="p-4 text-center opacity-70">Loading…</div>
+    </ng-template>
+  </nb-card-body>
+</nb-card>

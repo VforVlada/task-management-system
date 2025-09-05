@@ -7,4 +7,5 @@ export abstract class UserRepository {
   abstract create(input: Omit<User, 'id'>): Observable<User>;
   abstract update(id: string, patch: Partial<User>): Observable<User>;
   abstract delete(id: string): Observable<void>;
+  resetToSeeds?(): Observable<void>;
 }

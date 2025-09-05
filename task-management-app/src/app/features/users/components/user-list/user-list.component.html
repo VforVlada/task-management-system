@@ -8,7 +8,55 @@
     </div>
 
     <ng-container *ngIf="(users$ | async) as users; else loading">
-      <div class="board" cdkDropListGroup>
+  <ng-container *ngIf="(tasks$ | async) as tasks">
+      <div class="board" cdkDropListGroup > 
+        
+        <section class="column sticky-left" >
+        <header class="column-header unassign">
+              <div class="title">Unassigned</div>
+            </header>
+
+              <div
+              class="cards"
+              cdkDropList
+              [cdkDropListData]="unassigned(tasks)"
+              [id]="UNASSIGNED_LIST_ID"
+              [cdkDropListConnectedTo]="listIds"
+              (cdkDropListDropped)="onDrop($event, undefined)">
+
+              <nb-card *ngFor="let t of unassigned(tasks)" class="task-card" cdkDrag>
+                <nb-card-body class="task-body">
+                  <div class="card-header">{{ t.name }}</div>
+                  <div class="card-description">{{ t.description }}</div>
+
+                  <div class="state-pills">
+                    <span
+                      class="date-pill"
+                      [style.background]="stateStyleMap.get(t.state)?.bg"
+                      [style.color]="stateStyleMap.get(t.state)?.color">
+                      {{ stateTitleMap.get(t.state) ?? t.state }}
+                    </span>
+                  </div>
+
+                  <div class="date-pills">
+                    <span nbTooltip="Created Time" nbTooltipPlacement="bottom" class="date-pill">
+                      <nb-icon icon="clock-outline"></nb-icon>
+                      {{ t.createdAt | date:'d MMM' }}
+                    </span>
+                    <span nbTooltip="Modified Time" nbTooltipPlacement="bottom" class="date-pill">
+                      <nb-icon icon="repeat-outline"></nb-icon>
+                      {{ t.updatedAt | date:'d MMM' }}
+                    </span>
+                  </div>
+                </nb-card-body>
+              </nb-card>
+
+              <div class="empty" *ngIf="!unassigned(tasks)?.length">
+                <span>No tasks</span>
+              </div>
+            </div>
+          </section>
+ <div class="users-scroll">
         <section class="column" *ngFor="let u of users">
           <header class="column-header">
             <div class="title">{{ u.name }}</div>
@@ -66,9 +114,9 @@
               <span>No tasks</span>
             </div>
           </div>
-        </section>
+        </section></div>
       </div>
-    </ng-container>
+    </ng-container></ng-container>
 
     <ng-template #loading>
       <div class="p-4 text-center opacity-70">Loading…</div>

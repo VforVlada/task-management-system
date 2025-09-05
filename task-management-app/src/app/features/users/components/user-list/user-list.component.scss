@@ -8,10 +8,17 @@
   font-weight: 600;
   background-color: #deedf8;
   color: #9ab2c3;
+
+  &.unassign {
+    background-color: #f1f7fa;
+    color: #9ab2c3;
+  }
 }
 
 .column-header .title {
   font-weight: 600;
+  height: 2rem;
+  align-content: center;
 }
 
 .task-title a {
@@ -109,8 +116,7 @@
   gap: 16px;
   overflow-x: auto;
   padding-bottom: 8px;
-  scroll-snap-type: x proximity;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
 }
 
 .column {
@@ -124,6 +130,12 @@
   border-radius: 12px;
   padding: 12px;
   box-sizing: border-box;
+}
+
+.column.sticky-left {
+  position: sticky;
+  left: 0;
+  z-index: 3;
 }
 
 .card-board {
@@ -266,5 +278,27 @@ a.task-title:focus {
 }
 
 .board:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.users-scroll {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+
+.users-scroll::-webkit-scrollbar {
+  height: 10px;
+}
+
+.users-scroll::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.users-scroll:hover::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.35);
 }

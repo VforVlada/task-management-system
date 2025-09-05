@@ -1,8 +1,11 @@
 import { Observable, defer, of } from 'rxjs';
-import { DEFAULT_USERS } from '../seeds/seeds';
+import { DEFAULT_TASKS, DEFAULT_USERS } from '../seeds/seeds';
 import { UserRepository } from '../../domain/repositories/user.repo';
 import { User } from '../../domain/models/user.model';
-const STORAGE_KEY = 'users';
+
+const STORAGE_KEY = 'users_v1';
+const VERSION_KEY = STORAGE_KEY + ':version';
+const SEED_VERSION = new Date().toISOString();
 
 export class UserLocalRepository implements UserRepository {
   private init() {
@@ -58,4 +61,23 @@ export class UserLocalRepository implements UserRepository {
       return of(void 0);
     });
   }
+  
+    resetToSeeds() {
+      return defer(() => {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(VERSION_KEY);
+        this.ensureSeed();
+        return of(void 0);
+      });
+    }
+    
+    private ensureSeed() {
+      const v = localStorage.getItem(VERSION_KEY);
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw || v !== SEED_VERSION) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(JSON.parse(JSON.stringify(DEFAULT_TASKS))));
+        localStorage.setItem(VERSION_KEY, SEED_VERSION);
+      }
+    }
+  
 }

@@ -58,7 +58,9 @@ export class UserListComponent implements OnInit {
   saving = false;
 
   users$!: Observable<User[]>;
+  tasks$!: Observable<Task[]>;   
   listIds: string[] = [];
+  private _users: User[] = [];
 
   @ViewChild('contentTemplate') contentTemplate!: TemplateRef<any>;
 
@@ -67,6 +69,7 @@ export class UserListComponent implements OnInit {
     { state: TaskState.InProgress, title: 'In Progress', headerBg: '#dff4f1', headerColor: '#55bfafff' },
     { state: TaskState.Done,       title: 'Done',        headerBg: '#e7f6df', headerColor: '#73ae53ff'  },
   ];
+  readonly UNASSIGNED_LIST_ID = 'list-unassigned';
 
   userMenu = [
     { title: 'Edit' },
@@ -85,7 +88,7 @@ export class UserListComponent implements OnInit {
 
   ngOnInit() {
     this.store.load();
-
+    
     this.users$ = this.store.users$.pipe(
       map(users =>
         (users ?? []).slice().sort((a, b) =>
@@ -99,8 +102,13 @@ export class UserListComponent implements OnInit {
     );
 
     this.users$.subscribe(users => {
-      this.listIds = users.map(u => this.getListId(u.id));
+      this._users = users ?? [];
+       this.listIds = [this.UNASSIGNED_LIST_ID, ...this._users.map(u => this.getListId(u.id))];
+   
     });
+
+    this.tasksStore.load();          
+    this.tasks$ = this.tasksStore.tasks$;  
 
     this.menu.onItemClick()
       .pipe(
@@ -151,6 +159,11 @@ export class UserListComponent implements OnInit {
       });
   }
 
+  
+  unassigned(all: any[]): Task[] {
+    return (all ?? []).filter(t => !t.assigneeId);
+  }
+
   tasksOf(u: User): Task[] {
     return u.tasks ?? [];
   }
@@ -159,7 +172,7 @@ export class UserListComponent implements OnInit {
     return `list-${userId}`;
   }
 
-  onDrop(event: CdkDragDrop<Task[]>, toUser: User) {
+  onDrop(event: CdkDragDrop<Task[]>, toUser?: User) {
     const src = event.previousContainer.data;
     const dst = event.container.data;
 
@@ -173,7 +186,7 @@ export class UserListComponent implements OnInit {
     transferArrayItem(src, dst, event.previousIndex, event.currentIndex);
 
     const changes: Partial<Task> = {
-      assigneeId: String(toUser.id),
+      assigneeId: toUser ? String(toUser.id) : undefined,
       updatedAt: new Date().toISOString(),
       state: TaskState.InQueue,
     };

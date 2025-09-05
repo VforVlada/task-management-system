@@ -4,57 +4,29 @@ import { TaskRepository } from '../../domain/repositories/task.repo';
 import { DEFAULT_TASKS } from '../seeds/seeds';
 import { assertTaskBusinessRules } from '../../domain/rules/task.rules';
 
-const STORAGE_KEY = 'tasks';
-
-function normalizeTask(raw: any): Task {
-  const id = String(raw?.id ?? crypto.randomUUID());
-  const name = String(raw?.name ?? 'Untitled');
-  const description =
-    raw?.description != null && raw?.description !== '' ? String(raw.description) : undefined;
-
-  const createdAt = String(raw?.createdAt ?? new Date().toISOString());
-  const updatedAt = String(raw?.updatedAt ?? createdAt);
-
-  const assigneeId =
-    raw?.assigneeId != null && raw?.assigneeId !== '' ? String(raw.assigneeId) : undefined;
-
-  const state: TaskState =
-    typeof raw?.state === 'string' && Object.values(TaskState).includes(raw.state as TaskState)
-      ? (raw.state as TaskState)
-      : TaskState.InQueue;
-
-  const normalizedState = assigneeId ? state : TaskState.InQueue;
-
-  return {
-    id,
-    name,
-    description,
-    createdAt,
-    updatedAt,
-    state: normalizedState,
-    assigneeId,
-  };
-}
+const STORAGE_KEY = 'tasks_v1';
+const VERSION_KEY = STORAGE_KEY + ':version';
+const SEED_VERSION = new Date().toISOString();
 
 export class TaskLocalRepository implements TaskRepository {
   private init() {
     const raw = localStorage.getItem(STORAGE_KEY);
 
     if (!raw) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_TASKS.map(normalizeTask)));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_TASKS.map(this.normalizeTask)));
       return;
     }
 
     try {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed)) {
-        const normalized = parsed.map(normalizeTask);
+        const normalized = parsed.map(this.normalizeTask);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
       } else {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_TASKS.map(normalizeTask)));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_TASKS.map(this.normalizeTask)));
       }
     } catch {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_TASKS.map(normalizeTask)));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_TASKS.map(this.normalizeTask)));
     }
   }
 
@@ -64,7 +36,7 @@ export class TaskLocalRepository implements TaskRepository {
     if (!raw) return [];
     try {
       const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed.map(normalizeTask) : [];
+      return Array.isArray(parsed) ? parsed.map(this.normalizeTask) : [];
     } catch {
       return [];
     }
@@ -75,6 +47,7 @@ export class TaskLocalRepository implements TaskRepository {
   }
 
   list(): Observable<Task[]> {
+    this.ensureSeed();
     return defer(() => of(this.read()));
   }
 
@@ -85,7 +58,7 @@ export class TaskLocalRepository implements TaskRepository {
   create(input: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>): Observable<Task> {
     return defer(() => {
       const now = new Date().toISOString();
-      const draft: Task = normalizeTask({
+      const draft: Task = this.normalizeTask({
         ...input,
         id: crypto.randomUUID(),
         createdAt: now,
@@ -107,7 +80,7 @@ export class TaskLocalRepository implements TaskRepository {
       if (idx < 0) throw new Error('Task not found');
 
       const current = all[idx];
-      const next: Task = normalizeTask({
+      const next: Task = this.normalizeTask({
         ...current,
         ...patch,
         id: current.id,
@@ -129,5 +102,53 @@ export class TaskLocalRepository implements TaskRepository {
       this.write(next);
       return of(void 0);
     });
+  }
+ 
+  resetToSeeds() {
+    return defer(() => {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(VERSION_KEY);
+      this.ensureSeed();
+      return of(void 0);
+    });
+  }
+  
+  private ensureSeed() {
+    const v = localStorage.getItem(VERSION_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw || v !== SEED_VERSION) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(JSON.parse(JSON.stringify(DEFAULT_TASKS))));
+      localStorage.setItem(VERSION_KEY, SEED_VERSION);
+    }
+  }
+
+  private normalizeTask(raw: any): Task {
+    const id = String(raw?.id ?? crypto.randomUUID());
+    const name = String(raw?.name ?? 'Untitled');
+    const description =
+      raw?.description != null && raw?.description !== '' ? String(raw.description) : undefined;
+
+    const createdAt = String(raw?.createdAt ?? new Date().toISOString());
+    const updatedAt = String(raw?.updatedAt ?? createdAt);
+
+    const assigneeId =
+      raw?.assigneeId != null && raw?.assigneeId !== '' ? String(raw.assigneeId) : undefined;
+
+    const state: TaskState =
+      typeof raw?.state === 'string' && Object.values(TaskState).includes(raw.state as TaskState)
+        ? (raw.state as TaskState)
+        : TaskState.InQueue;
+
+    const normalizedState = assigneeId ? state : TaskState.InQueue;
+
+    return {
+      id,
+      name,
+      description,
+      createdAt,
+      updatedAt,
+      state: normalizedState,
+      assigneeId,
+    };
   }
 }

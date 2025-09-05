@@ -7,4 +7,5 @@ export abstract class TaskRepository {
   abstract create(input: Omit<Task, 'id'|'createdAt'|'updatedAt'>): Observable<Task>;
   abstract update(id: string, patch: Partial<Task>): Observable<Task>;
   abstract delete(id: string): Observable<void>;
+  resetToSeeds?(): Observable<void>;
 }

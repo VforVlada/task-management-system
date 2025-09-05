@@ -1,9 +1,13 @@
- <nb-layout>
-      <nb-sidebar class="header">Task Management System
-        <nb-menu [items]="menuItems"></nb-menu>
-      </nb-sidebar>
-      
-      <nb-layout-column>
-        <router-outlet></router-outlet>
-      </nb-layout-column>
-    </nb-layout>
+<nb-layout class="app-shell">
+  <nb-layout-header class="app-header header">
+    Task Management System
+  </nb-layout-header>
+
+  <nb-layout-column class="page">
+    <nb-card class="page-card">
+      <div  class="tabs">
+        <nb-route-tabset [tabs]="tabs" fullWidth></nb-route-tabset>
+      </div>
+    </nb-card>
+  </nb-layout-column>
+</nb-layout>

@@ -1,4 +1,3 @@
-
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
@@ -6,14 +5,17 @@ import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-br
 import { routes } from './app.routes';
 
 import {
-  NbThemeModule,
-  NbLayoutModule,
-  NbSidebarModule,
   NbButtonModule,
   NbIconModule,
+  NbLayoutModule,
   NbMenuModule,
+  NbSidebarModule,
+  NbThemeModule,
+  NbToastrModule,
+  NbWindowModule,
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
+
 import { TaskRepository } from './domain/repositories/task.repo';
 import { UserRepository } from './domain/repositories/user.repo';
 import { TaskLocalRepository } from './data/repositories/task.local.repository';
@@ -25,14 +27,15 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     importProvidersFrom(
       BrowserAnimationsModule,
+      NbToastrModule.forRoot(),
+      NbWindowModule.forRoot(),
       NbThemeModule.forRoot({ name: 'default' }),
       NbSidebarModule.forRoot(),
-      NbMenuModule.forRoot(),     
+      NbMenuModule.forRoot(),
       NbLayoutModule,
-      NbSidebarModule.forRoot(),
       NbButtonModule,
       NbIconModule,
-      NbEvaIconsModule
+      NbEvaIconsModule,
     ),
     { provide: TaskRepository, useClass: TaskLocalRepository },
     { provide: UserRepository, useClass: UserLocalRepository },

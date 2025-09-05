@@ -1,17 +1,10 @@
 import { Routes } from '@angular/router';
 import { of } from 'rxjs';
-import { UserListPage } from './pages/user-list.page';
+import { UserListComponent } from './components/user-list/user-list.component';
 
 export const USER_ROUTES = of<Routes>([
   {
     path: '',
-    component: UserListPage 
-  },
-  // {
-  //   path: 'new',
-  //   component: UserEditPage
-  // },
-  // {
-  //   path: ':id', component: UserListPage
-  // },
+    component: UserListComponent 
+  }
 ]);

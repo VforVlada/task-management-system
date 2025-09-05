@@ -6,12 +6,5 @@ export const TASK_ROUTES = of<Routes>([
   {
     path: '',
     component: TaskListComponent
-  },
-  // {
-  //   path: 'new',
-  //   component: TaskEditPage
-  // },
-  // {
-  //   path: ':id', component: TaskEditPage
-  // },
+  }
 ]);

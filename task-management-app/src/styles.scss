@@ -9,3 +9,17 @@
     font-family: 'Roboto', sans-serif;
   }
 }
+
+html, body { height: 100%; margin: 0; }
+
+nb-layout.app-shell {
+  height: 100dvh;
+}
+
+nb-layout .layout,
+nb-layout .layout-container,
+nb-layout nb-layout-column {
+  height: 100%;
+  overflow: hidden;   
+  padding: 0;    
+}

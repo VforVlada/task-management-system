@@ -1,20 +1,33 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { NbIconModule, NbLayoutModule, NbMenuModule, NbSidebarModule } from '@nebular/theme';
+import { RouterModule } from '@angular/router';
+import {
+  NbCardModule,
+  NbIconModule,
+  NbLayoutModule,
+  NbMenuModule,
+  NbRouteTabsetModule,
+  NbSidebarModule,
+} from '@nebular/theme';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule,
+  imports: [
+    CommonModule,
+    RouterModule,
     NbLayoutModule,
     NbSidebarModule,
-    NbMenuModule, NbIconModule],
+    NbCardModule,
+    NbMenuModule,
+    NbIconModule,
+    NbRouteTabsetModule,
+  ],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrls: ['./app.scss'],
 })
 export class App {
-  menuItems = [
-    { title: 'Tasks', link: '/tasks', icon: 'list-outline' },
-    { title: 'Users', link: '/users', icon: 'people-outline' },
+  tabs = [
+    { title: 'Tasks', route: ['/tasks'] },
+    { title: 'Users', route: ['/users'] },
   ];
 }

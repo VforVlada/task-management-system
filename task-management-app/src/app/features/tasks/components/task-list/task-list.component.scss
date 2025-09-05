@@ -1,0 +1,311 @@
+.board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.card-board {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 12px;
+  padding: 0.5rem 0.8rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  height: 3rem;
+
+  .title {
+    font-weight: 600;
+  }
+
+  .add-btn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+
+    nb-icon {
+      font-size: 1rem;
+    }
+  }
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+nb-card.task-card,
+.task-card {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.task-card,
+.task-card * {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.task-body {
+  position: relative;
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  min-width: 0;
+}
+
+.delete-btn {
+  min-width: 0 !important;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: end;
+  align-self: start;
+}
+
+.task-body .delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.delete-btn nb-icon {
+  font-size: 18px;
+}
+
+.card-header {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+  padding-right: 2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-description {
+  font-weight: 600;
+  color: rgb(158, 152, 152);
+  font-size: 0.9rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  opacity: 0.9;
+}
+
+.muted {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.task-title a {
+  text-decoration: none;
+  font-weight: 600;
+  color: inherit;
+}
+
+:host ::ng-deep a.task-title {
+  color: black !important;
+  text-decoration: none !important;
+}
+
+a.task-title:hover,
+a.task-title:focus {
+  color: rgb(121, 141, 149) !important;
+  text-decoration: none !important;
+}
+
+.drag-item.cdk-drag-dragging .task-title,
+.cdk-drag-preview .task-title {
+  color: #000 !important;
+  text-decoration: none;
+}
+
+.assigned {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  gap: 0.5rem;
+  border-radius: 10px;
+
+  .assign-btn nb-icon {
+    margin-right: 0.35rem;
+  }
+}
+
+.assign-btn {
+  text-transform: none !important;
+  font-size: 1rem;
+  font-weight: 600;
+  height: 1.5rem;
+  background-color: transparent !important;
+  border-color: #c6dde8 !important;
+  color: #7fb0c7 !important;
+  padding: 0 0.5rem;
+
+  &:hover {
+    background-color: #eef6f9 !important;
+    color: #7fb0c7 !important;
+  }
+}
+
+.date-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.date-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #f3f4f6;
+  color: #808080;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  line-height: 1.2;
+
+  nb-icon {
+    font-size: 1rem;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+.dates {
+  display: grid;
+  gap: 0.15rem;
+  opacity: 0.7;
+}
+
+.edit-task {
+  display: grid;
+  gap: 12px;
+  padding: 8px;
+}
+
+.edit-task .field {
+  display: grid;
+  gap: 6px;
+}
+
+.edit-task .label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.edit-task .hint {
+  font-size: 0.8rem;
+  opacity: 0.65;
+}
+
+.edit-task .actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.edit-task button[nbbutton] nb-icon {
+  margin-right: 6px;
+}
+
+.task-card {
+  cursor: grab;
+}
+
+.task-card:active {
+  cursor: grabbing;
+}
+
+.cdk-drag-preview {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+}
+
+.column .task-card.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drop-list-dragging .task-card:not(.cdk-drag-placeholder) {
+  opacity: 0.6;
+}
+
+.drag-handle {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 2px 4px;
+}
+
+.empty {
+  display: grid;
+  place-items: center;
+  min-height: 64px;
+  border: 1px dashed rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 0.9rem;
+}
+
+.board::-webkit-scrollbar {
+  height: 10px;
+}
+
+.board::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.board:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.35);
+}

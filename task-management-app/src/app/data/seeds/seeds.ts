@@ -2,16 +2,16 @@ import { Task, TaskState } from '../../domain/models/task.model';
 import { User } from '../../domain/models/user.model';
 
 export const DEFAULT_USERS: User[] = [
-  { id: 'u1', name: 'Kate' },
-  { id: 'u2', name: 'Rob' },
-  { id: 'u3', name: 'Alice' },
+  { id: 'u1', name: 'Kate Anniston' },
+  { id: 'u2', name: 'Rob Smith' },
+  { id: 'u3', name: 'Alice Green' },
 ];
 
 export const DEFAULT_TASKS: Task[] = [
   {
     id: 't1',
-    name: 'Task 1',
-    description: 'First task',
+    name: 'UI Component Modification',
+    description: 'Fix loading and progress bar',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     state: TaskState.InQueue,
@@ -19,11 +19,20 @@ export const DEFAULT_TASKS: Task[] = [
   },
   {
     id: 't2',
-    name: 'Task 2',
-    description: 'Second task',
+    name: 'Fix Abous Us Component',
+    description: 'Make background white and add links to social media',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     state: TaskState.Done,
     assigneeId: 'u2',
+  },
+  {
+    id: 't3',
+    name: 'Fix Board layout',
+    description: 'Board shows wrong and overflows the page',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    state: TaskState.Done,
+    assigneeId: undefined,
   },
 ];

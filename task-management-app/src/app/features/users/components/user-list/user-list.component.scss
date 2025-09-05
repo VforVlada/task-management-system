@@ -1,0 +1,270 @@
+.column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 12px;
+  padding: 0.5rem 0.8rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  background-color: #deedf8;
+  color: #9ab2c3;
+}
+
+.column-header .title {
+  font-weight: 600;
+}
+
+.task-title a {
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.task-body .meta {
+  margin-bottom: 0.25rem;
+}
+
+.task-body .dates {
+  display: grid;
+  gap: 0.15rem;
+  opacity: 0.7;
+}
+
+.empty {
+  display: grid;
+  place-items: center;
+  min-height: 64px;
+  border: 1px dashed rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 0.9rem;
+}
+
+.card-header {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: black;
+  margin-bottom: 1rem;
+}
+
+.card-description {
+  font-weight: 600;
+  color: rgb(158, 152, 152);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.assigned {
+  margin-bottom: 1rem;
+  border: solid qpx grey;
+}
+
+.date-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #f3f4f6;
+  color: #808080;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  line-height: 1.2;
+  width: auto;
+
+  nb-icon {
+    font-size: 1rem;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+.date-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.state-pills {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.assign-btn {
+  text-transform: none !important;
+  font-size: 1rem;
+  font-weight: 600;
+  height: 1.5rem;
+  background-color: transparent !important;
+  border-color: #c6dde8 !important;
+  color: #7fb0c7 !important;
+}
+
+.assign-btn:hover {
+  background-color: #eef6f9 !important;
+  color: #7fb0c7 !important;
+}
+
+.board {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+
+.column {
+  flex: 0 0 320px;
+  display: flex;
+  flex-direction: column;
+  scroll-snap-align: start;
+  gap: 12px;
+  min-width: 0;
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.card-board {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  height: 24rem;
+}
+
+.cards {
+  display: grid;
+  gap: 12px;
+  min-height: 40px;
+  min-width: 0;
+}
+
+nb-card.task-card,
+.task-card {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.task-card,
+.task-card * {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.task-body .card-header {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+a.task-title:hover,
+a.task-title:focus {
+  color: rgb(121, 141, 149) !important;
+  text-decoration: none !important;
+}
+
+.edit-task {
+  display: grid;
+  gap: 12px;
+  padding: 8px;
+}
+
+.edit-task .field {
+  display: grid;
+  gap: 6px;
+}
+
+.edit-task .label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.edit-task .hint {
+  font-size: 0.8rem;
+  opacity: 0.65;
+}
+
+.edit-task .actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.edit-task button[nbbutton] nb-icon {
+  margin-right: 6px;
+}
+
+.task-card {
+  cursor: grab;
+}
+
+.task-card:active {
+  cursor: grabbing;
+}
+
+.cdk-drag-preview {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+}
+
+.drag-placeholder {
+  height: 64px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.06);
+  border: 2px dashed rgba(0, 0, 0, 0.15);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+}
+
+.column .task-card.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drop-list-dragging .task-card:not(.cdk-drag-placeholder) {
+  opacity: 0.6;
+  transition: transform 0.2s ease;
+}
+
+.drag-handle {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 2px 4px;
+}
+
+.add-user-btn {
+  margin-bottom: 1rem;
+  margin-left: auto;
+}
+
+.create-sector {
+  display: flex;
+}
+
+.board::-webkit-scrollbar {
+  height: 10px;
+}
+
+.board::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.board:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.35);
+}

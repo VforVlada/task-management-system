@@ -1,3 +1,5 @@
+import { User } from "./user.model";
+
 export enum TaskState {
   InQueue = 'in queue',
   InProgress = 'in progress',
@@ -12,4 +14,5 @@ export interface Task {
   updatedAt: string;
   state: TaskState;
   assigneeId?: string;
+  user?: User
 }

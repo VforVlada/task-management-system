@@ -2,8 +2,8 @@ import { Task, TaskState } from '../../domain/models/task.model';
 import { User } from '../../domain/models/user.model';
 
 export const DEFAULT_USERS: User[] = [
-  { id: 'u1', name: 'Kate Anniston' },
-  { id: 'u2', name: 'Rob Smith' },
+  { id: 'u1', name: 'Katherine Anniston' },
+  { id: 'u2', name: 'Robert Smith' },
   { id: 'u3', name: 'Alice Green' },
 ];
 

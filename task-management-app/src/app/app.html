@@ -5,8 +5,17 @@
 
   <nb-layout-column class="page">
     <nb-card class="page-card">
-      <div  class="tabs">
-        <nb-route-tabset [tabs]="tabs" fullWidth></nb-route-tabset>
+      <div class="tabs">
+        <nb-tabset fullWidth (changeTab)="onChangeTab($event)">
+          <nb-tab *ngFor="let t of tabs; let i = index"
+                  [tabTitle]="t.title"
+                  [active]="selectedIndex === i">
+          </nb-tab>
+        </nb-tabset>
+      </div>
+
+      <div class="page-body">
+        <router-outlet></router-outlet>
       </div>
     </nb-card>
   </nb-layout-column>

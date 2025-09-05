@@ -1,33 +1,68 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import {
-  NbCardModule,
-  NbIconModule,
   NbLayoutModule,
-  NbMenuModule,
-  NbRouteTabsetModule,
+  NbCardModule,
+  NbTabsetModule,
   NbSidebarModule,
+  NbIconModule,
 } from '@nebular/theme';
+import { filter } from 'rxjs';
+
+type TabItem = { title: string; route: string };
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   imports: [
     CommonModule,
     RouterModule,
     NbLayoutModule,
     NbSidebarModule,
     NbCardModule,
-    NbMenuModule,
     NbIconModule,
-    NbRouteTabsetModule,
+    NbTabsetModule,
   ],
   templateUrl: './app.html',
   styleUrls: ['./app.scss'],
 })
 export class App {
-  tabs = [
-    { title: 'Tasks', route: ['/tasks'] },
-    { title: 'Users', route: ['/users'] },
+  tabs: TabItem[] = [
+    { title: 'Tasks', route: '/tasks' },
+    { title: 'Users', route: '/users' },
   ];
+
+  selectedIndex = 0;
+
+  constructor(private router: Router) {
+    this.syncSelectedIndex(this.router.url);
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe((e: NavigationEnd) =>
+        this.syncSelectedIndex(e.urlAfterRedirects)
+      );
+  }
+
+  onChangeTab(e: any) {
+    let idx = typeof e?.index === 'number' ? e.index : -1;
+
+    if (idx < 0 && this.tabs) {
+      const byRef = this.tabs.indexOf(e);
+      if (byRef >= 0) idx = byRef;
+    }
+
+    if (idx < 0 && e?.tabTitle) {
+      idx = this.tabs.findIndex(t => t.title === e.tabTitle);
+    }
+
+    if (idx < 0) return;
+
+    this.selectedIndex = idx;
+    this.router.navigateByUrl(this.tabs[idx].route);
+  }
+
+  private syncSelectedIndex(url: string) {
+    this.selectedIndex = url.includes('/users') ? 1 : 0;
+  }
 }

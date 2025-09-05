@@ -1,7 +1,7 @@
-<nb-card>
-  <nb-card-body>
-    <ng-container *ngIf="(tasks$ | async) as tasks; else loading">
-      <div class="board">
+
+    <div class="card">
+  <div *ngIf="(tasks$ | async) as tasks; else loading" class="board-shell">
+    <div class="board">
         <section class="column" *ngFor="let col of columns">
           <header class="column-header" [style.background]="col.headerBg" [style.color]="col.headerColor">
             <div class="title">{{ col.title }}</div>
@@ -96,13 +96,12 @@
           </div>
         </section>
       </div>
-    </ng-container>
+    </div>
 
+     </div>
      <ng-template #loading>
       <div class="p-4 text-center opacity-70">Loading…</div>
     </ng-template>
-  </nb-card-body>
-</nb-card>
 
 <ng-template #contentTemplate let-data>
   <ng-container *ngIf="data?.text as t">

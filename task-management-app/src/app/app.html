@@ -7,9 +7,11 @@
     <nb-card class="page-card">
       <div class="tabs">
         <nb-tabset fullWidth (changeTab)="onChangeTab($event)">
-          <nb-tab *ngFor="let t of tabs; let i = index"
-                  [tabTitle]="t.title"
-                  [active]="selectedIndex === i">
+          <nb-tab
+            *ngFor="let t of tabs; let i = index"
+            [tabTitle]="t.title"
+            [active]="selectedIndex === i"
+          >
           </nb-tab>
         </nb-tabset>
       </div>

@@ -1,6 +1,14 @@
 <div class="card">
   <div class="create-sector">
-    <button nbButton size="small" ghost shape="round" class="add-user-btn" outline (click)="createUser()">
+    <button
+      nbButton
+      size="small"
+      ghost
+      shape="round"
+      class="add-user-btn"
+      outline
+      (click)="createUser()"
+    >
       <nb-icon icon="person-add-outline"></nb-icon>
       Add User
     </button>
@@ -8,42 +16,56 @@
 
   <div class="board-shell">
     <div class="board" cdkDropListGroup>
-      <ng-container *ngIf="(users$ | async) as users; else loading">
-        <ng-container *ngIf="(tasks$ | async) as tasks">
-
+      <ng-container *ngIf="users$ | async as users; else loading">
+        <ng-container *ngIf="tasks$ | async as tasks">
           <section class="column sticky-left">
             <header class="column-header unassign">
               <div class="title">Unassigned</div>
             </header>
 
-            <div class="cards"
-                 cdkDropList
-                 [cdkDropListData]="unassigned(tasks)"
-                 [id]="UNASSIGNED_LIST_ID"
-                 [cdkDropListConnectedTo]="listIds"
-                 (cdkDropListDropped)="onDrop($event, undefined)">
-
-              <nb-card *ngFor="let t of unassigned(tasks)" class="task-card" cdkDrag>
+            <div
+              class="cards"
+              cdkDropList
+              [cdkDropListData]="unassigned(tasks)"
+              [id]="UNASSIGNED_LIST_ID"
+              [cdkDropListConnectedTo]="listIds"
+              (cdkDropListDropped)="onDrop($event, undefined)"
+            >
+              <nb-card
+                *ngFor="let t of unassigned(tasks)"
+                class="task-card"
+                cdkDrag
+              >
                 <nb-card-body class="task-body">
                   <div class="card-header">{{ t.name }}</div>
                   <div class="card-description">{{ t.description }}</div>
 
                   <div class="state-pills">
-                    <span class="date-pill"
-                          [style.background]="stateStyleMap.get(t.state)?.bg"
-                          [style.color]="stateStyleMap.get(t.state)?.color">
+                    <span
+                      class="date-pill"
+                      [style.background]="stateStyleMap.get(t.state)?.bg"
+                      [style.color]="stateStyleMap.get(t.state)?.color"
+                    >
                       {{ stateTitleMap.get(t.state) ?? t.state }}
                     </span>
                   </div>
 
                   <div class="date-pills">
-                    <span nbTooltip="Created Time" nbTooltipPlacement="bottom" class="date-pill">
+                    <span
+                      nbTooltip="Created Time"
+                      nbTooltipPlacement="bottom"
+                      class="date-pill"
+                    >
                       <nb-icon icon="clock-outline"></nb-icon>
-                      {{ t.createdAt | date:'d MMM' }}
+                      {{ t.createdAt | date: "d MMM" }}
                     </span>
-                    <span nbTooltip="Modified Time" nbTooltipPlacement="bottom" class="date-pill">
+                    <span
+                      nbTooltip="Modified Time"
+                      nbTooltipPlacement="bottom"
+                      class="date-pill"
+                    >
                       <nb-icon icon="repeat-outline"></nb-icon>
-                      {{ t.updatedAt | date:'d MMM' }}
+                      {{ t.updatedAt | date: "d MMM" }}
                     </span>
                   </div>
                 </nb-card-body>
@@ -59,46 +81,63 @@
             <section class="column" *ngFor="let u of users">
               <header class="column-header">
                 <div class="title">{{ u.name }}</div>
-                <button nbButton size="small" appearance="ghost" shape="round"
-                        class="add-btn"
-                        [nbContextMenu]="userMenu"
-                        [nbContextMenuTag]="u.id"
-                      >
-                 <nb-icon icon="more-vertical-outline"
-           nbTooltip="See More"
-           nbTooltipPlacement="bottom">
-  </nb-icon>
+                <button
+                  nbButton
+                  size="small"
+                  appearance="ghost"
+                  shape="round"
+                  class="add-btn"
+                  [nbContextMenu]="userMenu"
+                  [nbContextMenuTag]="u.id"
+                >
+                  <nb-icon
+                    icon="more-vertical-outline"
+                    nbTooltip="See More"
+                    nbTooltipPlacement="bottom"
+                  >
+                  </nb-icon>
                 </button>
               </header>
 
-              <div class="cards"
-                   cdkDropList
-                   [cdkDropListData]="tasksOf(u)"
-                   [id]="getListId(u.id)"
-                   [cdkDropListConnectedTo]="connectedTo(u.id)"
-                   (cdkDropListDropped)="onDrop($event, u)">
-
+              <div
+                class="cards"
+                cdkDropList
+                [cdkDropListData]="tasksOf(u)"
+                [id]="getListId(u.id)"
+                [cdkDropListConnectedTo]="connectedTo(u.id)"
+                (cdkDropListDropped)="onDrop($event, u)"
+              >
                 <nb-card *ngFor="let t of u.tasks" class="task-card" cdkDrag>
                   <nb-card-body class="task-body">
                     <div class="card-header">{{ t.name }}</div>
                     <div class="card-description">{{ t.description }}</div>
 
                     <div class="state-pills">
-                      <span class="date-pill"
-                            [style.background]="stateStyleMap.get(t.state)?.bg"
-                            [style.color]="stateStyleMap.get(t.state)?.color">
+                      <span
+                        class="date-pill"
+                        [style.background]="stateStyleMap.get(t.state)?.bg"
+                        [style.color]="stateStyleMap.get(t.state)?.color"
+                      >
                         {{ stateTitleMap.get(t.state) ?? t.state }}
                       </span>
                     </div>
 
                     <div class="date-pills">
-                      <span nbTooltip="Created Time" nbTooltipPlacement="bottom" class="date-pill">
+                      <span
+                        nbTooltip="Created Time"
+                        nbTooltipPlacement="bottom"
+                        class="date-pill"
+                      >
                         <nb-icon icon="clock-outline"></nb-icon>
-                        {{ t.createdAt | date:'d MMM' }}
+                        {{ t.createdAt | date: "d MMM" }}
                       </span>
-                      <span nbTooltip="Modified Time" nbTooltipPlacement="bottom" class="date-pill">
+                      <span
+                        nbTooltip="Modified Time"
+                        nbTooltipPlacement="bottom"
+                        class="date-pill"
+                      >
                         <nb-icon icon="repeat-outline"></nb-icon>
-                        {{ t.updatedAt | date:'d MMM' }}
+                        {{ t.updatedAt | date: "d MMM" }}
                       </span>
                     </div>
                   </nb-card-body>
@@ -110,7 +149,6 @@
               </div>
             </section>
           </div>
-
         </ng-container>
       </ng-container>
 
@@ -123,23 +161,51 @@
 
 <ng-template #contentTemplate let-data>
   <ng-container *ngIf="data?.text as t">
-    <form class="edit-task" #f="ngForm" (ngSubmit)="saveUser(t, data?.isCreate === true, f)">
+    <form
+      class="edit-task"
+      #f="ngForm"
+      (ngSubmit)="saveUser(t, data?.isCreate === true, f)"
+    >
       <div class="field">
         <label class="label" for="userName">User Name</label>
-        <input id="userName" nbInput fullWidth type="text" name="name" placeholder="User name"
-               required minlength="2" maxlength="80"
-               [pattern]="'^(?=.*\\S).{2,80}$'"
-               [(ngModel)]="t.name" #nameCtrl="ngModel"/>
-        <div class="errors" *ngIf="nameCtrl.invalid && (nameCtrl.touched || f.submitted)">
+        <input
+          id="userName"
+          nbInput
+          fullWidth
+          type="text"
+          name="name"
+          placeholder="User name"
+          required
+          minlength="2"
+          maxlength="30"
+          [pattern]="'^(?!\\s)(?!.*\\s$).{2,30}$'"
+          (blur)="t.name = t.name?.trim()"
+          [(ngModel)]="t.name"
+          #nameCtrl="ngModel"
+        />
+        <div
+          class="errors"
+          *ngIf="nameCtrl.invalid && (nameCtrl.touched || f.submitted)"
+        >
           <small *ngIf="nameCtrl.errors?.['required']">Name is required</small>
-          <small *ngIf="nameCtrl.errors?.['minlength']">At least 2 characters</small>
-          <small *ngIf="nameCtrl.errors?.['maxlength']">Max 80 characters</small>
-          <small *ngIf="nameCtrl.errors?.['pattern']">Cannot be only spaces</small>
+          <small *ngIf="nameCtrl.errors?.['minlength']"
+            >At least 2 characters</small
+          >
+          <small *ngIf="nameCtrl.errors?.['maxlength']"
+            >Max 30 characters</small
+          >
         </div>
       </div>
 
       <div class="actions">
-        <button nbButton appearance="outline" status="success" class="save" type="submit" [disabled]="f.invalid || saving">
+        <button
+          nbButton
+          appearance="outline"
+          status="success"
+          class="save"
+          type="submit"
+          [disabled]="f.invalid || saving"
+        >
           <nb-icon icon="save-outline"></nb-icon>
           <span>Save</span>
         </button>

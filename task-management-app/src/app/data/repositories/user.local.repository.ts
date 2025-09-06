@@ -29,7 +29,7 @@ export class UserLocalRepository implements UserRepository {
   }
 
   get(id: string): Observable<User | undefined> {
-    return defer(() => of(this.read().find(u => u.id === id)));
+    return defer(() => of(this.read().find((u) => u.id === id)));
   }
 
   create(input: Omit<User, 'id'>): Observable<User> {
@@ -45,7 +45,7 @@ export class UserLocalRepository implements UserRepository {
   update(id: string, patch: Partial<User>): Observable<User> {
     return defer(() => {
       const all = this.read();
-      const idx = all.findIndex(u => u.id === id);
+      const idx = all.findIndex((u) => u.id === id);
       if (idx < 0) throw new Error('User not found');
       const updated: User = { ...all[idx], ...patch };
       all[idx] = updated;
@@ -56,28 +56,30 @@ export class UserLocalRepository implements UserRepository {
 
   delete(id: string): Observable<void> {
     return defer(() => {
-      const next = this.read().filter(u => u.id !== id);
+      const next = this.read().filter((u) => u.id !== id);
       this.write(next);
       return of(void 0);
     });
   }
-  
-    resetToSeeds() {
-      return defer(() => {
-        localStorage.removeItem(STORAGE_KEY);
-        localStorage.removeItem(VERSION_KEY);
-        this.ensureSeed();
-        return of(void 0);
-      });
+
+  resetToSeeds() {
+    return defer(() => {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(VERSION_KEY);
+      this.ensureSeed();
+      return of(void 0);
+    });
+  }
+
+  private ensureSeed() {
+    const v = localStorage.getItem(VERSION_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw || v !== SEED_VERSION) {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(JSON.parse(JSON.stringify(DEFAULT_TASKS))),
+      );
+      localStorage.setItem(VERSION_KEY, SEED_VERSION);
     }
-    
-    private ensureSeed() {
-      const v = localStorage.getItem(VERSION_KEY);
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw || v !== SEED_VERSION) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(JSON.parse(JSON.stringify(DEFAULT_TASKS))));
-        localStorage.setItem(VERSION_KEY, SEED_VERSION);
-      }
-    }
-  
+  }
 }

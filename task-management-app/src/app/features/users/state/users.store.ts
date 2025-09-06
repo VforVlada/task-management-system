@@ -1,5 +1,12 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, forkJoin, map, shareReplay, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  forkJoin,
+  map,
+  shareReplay,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { User } from '../../../domain/models/user.model';
 import { UserRepository } from '../../../domain/repositories/user.repo';
 import { TaskRepository } from '../../../domain/repositories/task.repo';
@@ -16,33 +23,35 @@ export class UsersStore {
   readonly refresh$ = new BehaviorSubject<void>(void 0);
 
   constructor() {
-   this.refresh$
-  .pipe(
-    switchMap(() =>
-      forkJoin({
-        users: this.repo.list(),       
-        tasks: this.taskRepo.list(), 
-      })
-    ),
-    map(({ users, tasks }) => {
-      const byUser = new Map<string, Task[]>();
-      for (const t of tasks) {
-        const uid = t.assigneeId;           
-        if (!uid) continue;
-        if (!byUser.has(uid)) byUser.set(uid, []);
-        byUser.get(uid)!.push(t);
-      }
-      return users.map(u => ({
-        ...u,
-        tasks: byUser.get(u.id) ?? [],
-      }));
-    }),
-    shareReplay(1)
-  )
-  .subscribe(usersWithTasks => this._users$.next(usersWithTasks));
+    this.refresh$
+      .pipe(
+        switchMap(() =>
+          forkJoin({
+            users: this.repo.list(),
+            tasks: this.taskRepo.list(),
+          }),
+        ),
+        map(({ users, tasks }) => {
+          const byUser = new Map<string, Task[]>();
+          for (const t of tasks) {
+            const uid = t.assigneeId;
+            if (!uid) continue;
+            if (!byUser.has(uid)) byUser.set(uid, []);
+            byUser.get(uid)!.push(t);
+          }
+          return users.map((u) => ({
+            ...u,
+            tasks: byUser.get(u.id) ?? [],
+          }));
+        }),
+        shareReplay(1),
+      )
+      .subscribe((usersWithTasks) => this._users$.next(usersWithTasks));
   }
 
-  load() { this.refresh$.next(); }
+  load() {
+    this.refresh$.next();
+  }
 
   create(input: Omit<User, 'id'>) {
     return this.repo.create(input).pipe(tap(() => this.load()));

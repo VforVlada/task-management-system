@@ -13,7 +13,10 @@ export class TaskLocalRepository implements TaskRepository {
     const raw = localStorage.getItem(STORAGE_KEY);
 
     if (!raw) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_TASKS.map(this.normalizeTask)));
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(DEFAULT_TASKS.map(this.normalizeTask)),
+      );
       return;
     }
 
@@ -23,10 +26,16 @@ export class TaskLocalRepository implements TaskRepository {
         const normalized = parsed.map(this.normalizeTask);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
       } else {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_TASKS.map(this.normalizeTask)));
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify(DEFAULT_TASKS.map(this.normalizeTask)),
+        );
       }
     } catch {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_TASKS.map(this.normalizeTask)));
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(DEFAULT_TASKS.map(this.normalizeTask)),
+      );
     }
   }
 
@@ -52,10 +61,12 @@ export class TaskLocalRepository implements TaskRepository {
   }
 
   get(id: string): Observable<Task | undefined> {
-    return defer(() => of(this.read().find(t => t.id === id)));
+    return defer(() => of(this.read().find((t) => t.id === id)));
   }
 
-  create(input: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>): Observable<Task> {
+  create(
+    input: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>,
+  ): Observable<Task> {
     return defer(() => {
       const now = new Date().toISOString();
       const draft: Task = this.normalizeTask({
@@ -76,7 +87,7 @@ export class TaskLocalRepository implements TaskRepository {
   update(id: string, patch: Partial<Task>): Observable<Task> {
     return defer(() => {
       const all = this.read();
-      const idx = all.findIndex(t => t.id === id);
+      const idx = all.findIndex((t) => t.id === id);
       if (idx < 0) throw new Error('Task not found');
 
       const current = all[idx];
@@ -98,12 +109,12 @@ export class TaskLocalRepository implements TaskRepository {
 
   delete(id: string): Observable<void> {
     return defer(() => {
-      const next = this.read().filter(t => t.id !== id);
+      const next = this.read().filter((t) => t.id !== id);
       this.write(next);
       return of(void 0);
     });
   }
- 
+
   resetToSeeds() {
     return defer(() => {
       localStorage.removeItem(STORAGE_KEY);
@@ -112,12 +123,15 @@ export class TaskLocalRepository implements TaskRepository {
       return of(void 0);
     });
   }
-  
+
   private ensureSeed() {
     const v = localStorage.getItem(VERSION_KEY);
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw || v !== SEED_VERSION) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(JSON.parse(JSON.stringify(DEFAULT_TASKS))));
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(JSON.parse(JSON.stringify(DEFAULT_TASKS))),
+      );
       localStorage.setItem(VERSION_KEY, SEED_VERSION);
     }
   }
@@ -126,16 +140,21 @@ export class TaskLocalRepository implements TaskRepository {
     const id = String(raw?.id ?? crypto.randomUUID());
     const name = String(raw?.name ?? 'Untitled');
     const description =
-      raw?.description != null && raw?.description !== '' ? String(raw.description) : undefined;
+      raw?.description != null && raw?.description !== ''
+        ? String(raw.description)
+        : undefined;
 
     const createdAt = String(raw?.createdAt ?? new Date().toISOString());
     const updatedAt = String(raw?.updatedAt ?? createdAt);
 
     const assigneeId =
-      raw?.assigneeId != null && raw?.assigneeId !== '' ? String(raw.assigneeId) : undefined;
+      raw?.assigneeId != null && raw?.assigneeId !== ''
+        ? String(raw.assigneeId)
+        : undefined;
 
     const state: TaskState =
-      typeof raw?.state === 'string' && Object.values(TaskState).includes(raw.state as TaskState)
+      typeof raw?.state === 'string' &&
+      Object.values(TaskState).includes(raw.state as TaskState)
         ? (raw.state as TaskState)
         : TaskState.InQueue;
 

@@ -1,112 +1,168 @@
-
-    <div class="card">
-  <div *ngIf="(tasks$ | async) as tasks; else loading" class="board-shell">
+<div class="card">
+  <div *ngIf="tasks$ | async as tasks; else loading" class="board-shell">
     <div class="board">
-        <section class="column" *ngFor="let col of columns">
-          <header class="column-header" [style.background]="col.headerBg" [style.color]="col.headerColor">
-            <div class="title">{{ col.title }}</div>
-            <button *ngIf="col.title === 'In Queue'" nbButton size="tiny" ghost shape="round" class="add-btn"
-                    nbTooltip="Add Task" nbTooltipPlacement="bottom" (click)="createTask()">
-              <nb-icon icon="plus-outline"></nb-icon>
-            </button>
-          </header>
+      <section class="column" *ngFor="let col of columns">
+        <header
+          class="column-header"
+          [style.background]="col.headerBg"
+          [style.color]="col.headerColor"
+        >
+          <div class="title">{{ col.title }}</div>
+          <button
+            *ngIf="col.title === 'In Queue'"
+            nbButton
+            size="tiny"
+            ghost
+            shape="round"
+            class="add-btn"
+            nbTooltip="Add Task"
+            nbTooltipPlacement="bottom"
+            (click)="createTask()"
+          >
+            <nb-icon icon="plus-outline"></nb-icon>
+          </button>
+        </header>
 
-          <div class="cards"
-     cdkDropList
-     [id]="'list-' + col.state"
-     [cdkDropListConnectedTo]="listIds"
-     [cdkDropListData]="tasks | byState: col.state"
-     (cdkDropListDropped)="onDrop($event, col.state)">
+        <div
+          class="cards"
+          cdkDropList
+          [id]="'list-' + col.state"
+          [cdkDropListConnectedTo]="listIds"
+          [cdkDropListData]="tasks | byState: col.state"
+          (cdkDropListDropped)="onDrop($event, col.state)"
+        >
+          <div
+            *ngFor="let t of tasks | byState: col.state; trackBy: trackById"
+            class="drag-item"
+            cdkDrag
+            [cdkDragData]="t"
+            [cdkDragRootElement]="'.task-card'"
+          >
+            <nb-card class="task-card">
+              <nb-card-body class="task-body">
+                <button
+                  nbButton
+                  size="tiny"
+                  ghost
+                  shape="round"
+                  class="delete-btn"
+                  (click)="deleteTask(t)"
+                  nbTooltip="Delete Task"
+                  nbTooltipPlacement="bottom"
+                >
+                  <nb-icon icon="trash-outline"></nb-icon>
+                </button>
+                <div class="card-header">
+                  <button
+                    type="button"
+                    class="task-title pointer"
+                    (click)="editTask(t)"
+                    nbTooltip="Edit Task"
+                    nbTooltipPlacement="bottom"
+                  >
+                    {{ t.name }}
+                  </button>
+                </div>
 
-  <div *ngFor="let t of (tasks | byState: col.state); trackBy: trackById"
-       class="drag-item"
-       cdkDrag
-       [cdkDragData]="t"
-       [cdkDragRootElement]="'.task-card'">
+                <div
+                  class="card-description"
+                  *ngIf="t.description; else noDesc"
+                >
+                  {{ t.description }}
+                </div>
+                <ng-template #noDesc>
+                  <span class="muted">No description</span>
+                </ng-template>
 
-    <nb-card class="task-card">
-                <nb-card-body class="task-body">
+                <div class="assigned">
+                  <ng-container
+                    *ngIf="t.assigneeId !== null && t.user as u; else assignBtn"
+                  >
+                    <nb-user
+                      nbTooltip="Reassign Task"
+                      nbTooltipPlacement="bottom"
+                      class="pointer"
+                      (click)="editTask(t)"
+                      (mousedown)="$event.stopPropagation()"
+                      (touchstart)="$event.stopPropagation()"
+                      size="small"
+                      [name]="u?.name ?? ''"
+                      s
+                      [onlyPicture]="false"
+                    ></nb-user>
+                  </ng-container>
 
-                  <button nbButton size="tiny" ghost shape="round" class="delete-btn" 
-                    (click)="deleteTask(t)"
-                    nbTooltip="Delete Task" nbTooltipPlacement="bottom">
-              <nb-icon icon="trash-outline"></nb-icon>
-            </button>
-                  <div class="card-header">
-                    <a class="task-title" (click)="editTask(t)"  nbTooltip="Edit Task" nbTooltipPlacement="bottom">
-                      {{ t.name }}
-                    </a>
-                  </div>
-
-                  <div class="card-description" *ngIf="t.description; else noDesc">
-                    {{ t.description }}
-                  </div>
-                  <ng-template #noDesc>
-                    <span class="muted">No description</span>
+                  <ng-template #assignBtn>
+                    <button
+                      nbButton
+                      size="small"
+                      appearance="outline"
+                      class="assign-btn"
+                      nbTooltip="Assign Task to User"
+                      nbTooltipPlacement="bottom"
+                      (click)="editTask(t)"
+                      (mousedown)="$event.stopPropagation()"
+                      (touchstart)="$event.stopPropagation()"
+                    >
+                      <nb-icon icon="person-add-outline"></nb-icon>
+                      <span>Assign</span>
+                    </button>
                   </ng-template>
+                </div>
 
-                  <div class="assigned">
-                    <ng-container *ngIf="t.assigneeId != null && t.user as u; else assignBtn">
-                      <nb-user size="small" [name]="u?.name ?? ''" [onlyPicture]="false"></nb-user>
-                    </ng-container>
+                <div class="date-pills">
+                  <span
+                    nbTooltip="Created Time"
+                    nbTooltipPlacement="bottom"
+                    class="date-pill"
+                  >
+                    <nb-icon icon="clock-outline"></nb-icon>
+                    {{ t.createdAt | date: "d MMM" }}
+                  </span>
+                  <span
+                    *ngIf="t.updatedAt"
+                    nbTooltip="Modified Time"
+                    nbTooltipPlacement="bottom"
+                    class="date-pill"
+                  >
+                    <nb-icon icon="repeat-outline"></nb-icon>
+                    {{ t.updatedAt | date: "d MMM" }}
+                  </span>
+                </div>
 
-                    <ng-template #assignBtn>
-                      <button nbButton size="small" appearance="outline" class="assign-btn"
-                              nbTooltip="Assign Task to User" nbTooltipPlacement="bottom" 
-                              (click)="editTask(t)"
-                              (mousedown)="$event.stopPropagation()"
-                              (touchstart)="$event.stopPropagation()">
-                        <nb-icon icon="person-add-outline"></nb-icon>
-                        <span>Assign</span>
-                      </button>
-                    </ng-template>
-                  </div>
-
-                  <div class="date-pills">
-                    <span nbTooltip="Created Time" nbTooltipPlacement="bottom"  class="date-pill">
-                      <nb-icon icon="clock-outline"></nb-icon>
-                      {{ t.createdAt | date: 'd MMM' }}
-                    </span>
-                    <span *ngIf="t.updatedAt"
-                          nbTooltip="Modified Time" nbTooltipPlacement="bottom" 
-                          class="date-pill">
-                      <nb-icon icon="repeat-outline"></nb-icon>
-                      {{ t.updatedAt | date: 'd MMM' }}
-                    </span>
-                  </div>
-
-                  <ng-template >
-                    <nb-card class="task-card drag-preview">
-                      <nb-card-body class="task-body">
-                        <div class="card-header">{{ t.name }}</div>
-                      </nb-card-body>
-                    </nb-card>
-                  </ng-template>
-                  <ng-template>
-                    <div class="task-card drag-placeholder"></div>
-                  </ng-template>
-
-                </nb-card-body>
-              </nb-card>
-            </div>
-
-            <div class="empty" *ngIf="(tasks | byState: col.state).length === 0">
-              <span>No tasks</span>
-            </div>
+                <ng-template>
+                  <nb-card class="task-card drag-preview">
+                    <nb-card-body class="task-body">
+                      <div class="card-header">{{ t.name }}</div>
+                    </nb-card-body>
+                  </nb-card>
+                </ng-template>
+                <ng-template>
+                  <div class="task-card drag-placeholder"></div>
+                </ng-template>
+              </nb-card-body>
+            </nb-card>
           </div>
-        </section>
-      </div>
-    </div>
 
-     </div>
-     <ng-template #loading>
-      <div class="p-4 text-center opacity-70">Loading…</div>
-    </ng-template>
+          <div class="empty" *ngIf="(tasks | byState: col.state).length === 0">
+            <span>No tasks</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+<ng-template #loading>
+  <div class="p-4 text-center opacity-70">Loading…</div>
+</ng-template>
 
 <ng-template #contentTemplate let-data>
   <ng-container *ngIf="data?.text as t">
-    <form class="edit-task" #f="ngForm" (ngSubmit)="saveTask(t, data?.isCreate === true, f)">
-
+    <form
+      class="edit-task"
+      #f="ngForm"
+      (ngSubmit)="saveTask(t, data?.isCreate === true, f)"
+    >
       <div class="field">
         <label class="label" for="taskName">Name</label>
         <input
@@ -119,15 +175,22 @@
           required
           minlength="2"
           maxlength="80"
-          [pattern]="'^(?=.*\\S).{2,80}$'"
+          [pattern]="'^(?!\\s)(?!.*\\s$).{2,80}$'"
           [(ngModel)]="t.name"
           #nameCtrl="ngModel"
+          (blur)="t.name = t.name?.trim()"
         />
-        <div class="errors" *ngIf="nameCtrl.invalid && (nameCtrl.touched || f.submitted)">
+        <div
+          class="errors"
+          *ngIf="nameCtrl.invalid && (nameCtrl.touched || f.submitted)"
+        >
           <small *ngIf="nameCtrl.errors?.['required']">Name is required</small>
-          <small *ngIf="nameCtrl.errors?.['minlength']">At least 2 characters</small>
-          <small *ngIf="nameCtrl.errors?.['maxlength']">Max 80 characters</small>
-          <small *ngIf="nameCtrl.errors?.['pattern']">Cannot be only spaces</small>
+          <small *ngIf="nameCtrl.errors?.['minlength']"
+            >At least 2 characters</small
+          >
+          <small *ngIf="nameCtrl.errors?.['maxlength']"
+            >Max 80 characters</small
+          >
         </div>
       </div>
 
@@ -147,16 +210,24 @@
       </div>
 
       <div class="field">
-        <label class="label">Assignee</label>
-        <nb-select fullWidth placeholder="Select user" [(ngModel)]="t.assigneeId" name="assigneeId">
+        <label class="label" for="assignee">Assignee</label>
+        <nb-select
+          fullWidth
+          name="assignee"
+          placeholder="Select user"
+          [(ngModel)]="t.assigneeId"
+          name="assigneeId"
+        >
           <nb-option [value]="undefined">Unassigned</nb-option>
-          <nb-option *ngFor="let u of users$ | async" [value]="u.id">{{ u.name }}</nb-option>
+          <nb-option *ngFor="let u of users$ | async" [value]="u.id">{{
+            u.name
+          }}</nb-option>
         </nb-select>
-        <small *ngIf="t.assigneeId == null && !data?.isCreate" class="hint">
+        <small *ngIf="t.assigneeId === null && !data?.isCreate" class="hint">
           Unassigned tasks will be moved to 'In Queue'
         </small>
       </div>
-      
+
       <div class="actions">
         <button
           nbButton

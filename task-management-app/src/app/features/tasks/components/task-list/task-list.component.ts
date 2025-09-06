@@ -1,4 +1,11 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  OnDestroy,
+  inject,
+} from '@angular/core';
 import { AsyncPipe, CommonModule, DatePipe } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -6,15 +13,11 @@ import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { Observable, Subject } from 'rxjs';
 
 import {
-  NbBadgeModule,
   NbButtonModule,
   NbCardModule,
   NbIconModule,
   NbInputModule,
-  NbLayoutModule,
-  NbListModule,
   NbSelectModule,
-  NbSidebarModule,
   NbToastrService,
   NbTooltipModule,
   NbUserModule,
@@ -38,15 +41,11 @@ import { UsersStore } from '../../../users/state/users.store';
     DatePipe,
     DragDropModule,
     FormsModule,
-    NbBadgeModule,
     NbButtonModule,
     NbCardModule,
     NbIconModule,
     NbInputModule,
-    NbLayoutModule,
-    NbListModule,
     NbSelectModule,
-    NbSidebarModule,
     NbTooltipModule,
     NbUserModule,
     RouterModule,
@@ -54,7 +53,7 @@ import { UsersStore } from '../../../users/state/users.store';
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.scss'],
 })
-export class TaskListComponent implements OnInit {
+export class TaskListComponent implements OnInit, OnDestroy {
   tasks$!: Observable<Task[]>;
   users$!: Observable<User[]>;
   listIds: string[] = [];
@@ -62,15 +61,27 @@ export class TaskListComponent implements OnInit {
   @ViewChild('contentTemplate') contentTemplate!: TemplateRef<any>;
 
   columns = [
-    { state: TaskState.InQueue,    title: 'In Queue',    headerBg: '#eee7ff', headerColor: '#b199e5ff' },
-    { state: TaskState.InProgress, title: 'In Progress', headerBg: '#dff4f1', headerColor: '#55bfafff' },
-    { state: TaskState.Done,       title: 'Done',        headerBg: '#e7f6df', headerColor: '#73ae53ff' },
+    {
+      state: TaskState.InQueue,
+      title: 'In Queue',
+      headerBg: '#eee7ff',
+      headerColor: '#b199e5ff',
+    },
+    {
+      state: TaskState.InProgress,
+      title: 'In Progress',
+      headerBg: '#dff4f1',
+      headerColor: '#55bfafff',
+    },
+    {
+      state: TaskState.Done,
+      title: 'Done',
+      headerBg: '#e7f6df',
+      headerColor: '#73ae53ff',
+    },
   ];
 
-  moreItems = [
-    { title: 'Edit' },
-    { title: 'Delete' },
-  ];
+  moreItems = [{ title: 'Edit' }, { title: 'Delete' }];
 
   windowRef?: NbWindowRef;
   saving = false;
@@ -79,19 +90,17 @@ export class TaskListComponent implements OnInit {
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private windowService: NbWindowService,
-    private usersStore: UsersStore,
-    private store: TasksStore,
-    private toast: NbToastrService,
-  ) {}
+  private readonly windowService = inject(NbWindowService);
+  private readonly usersStore = inject(UsersStore);
+  private readonly store = inject(TasksStore);
+  private readonly toast = inject(NbToastrService);
 
   ngOnInit() {
     this.store.load();
     this.usersStore.load();
     this.tasks$ = this.store.tasks$;
     this.users$ = this.usersStore.users$;
-    this.listIds = this.columns.map(c => `list-${c.state}`);
+    this.listIds = this.columns.map((c) => `list-${c.state}`);
   }
 
   onDrop(event: CdkDragDrop<any>, targetState: TaskState) {
@@ -100,14 +109,19 @@ export class TaskListComponent implements OnInit {
     if (task.state === targetState) return;
 
     if (!task.assigneeId && targetState !== TaskState.InQueue) {
-      this.toast?.warning('Unassigned tasks can be only in "In Queue".', 'Moving not allowed');
+      this.toast?.warning(
+        'Unassigned tasks can be only in "In Queue".',
+        'Moving not allowed',
+      );
       return;
     }
 
     this.store.update(task.id, { state: targetState }).subscribe({
-      next: () => {},
-      error: (err) => {
-        this.toast?.danger((err?.message ?? 'Moving rejected by rules'), 'Cannot move');
+      error: (err: any) => {
+        this.toast?.danger(
+          err?.message ?? 'Moving rejected by rules',
+          'Cannot move',
+        );
       },
     });
   }
@@ -120,7 +134,7 @@ export class TaskListComponent implements OnInit {
     });
   }
 
-  editTask(task: Task, state?: string) {
+  editTask(task: Task) {
     this.windowRef = this.windowService.open(this.contentTemplate, {
       title: 'Edit Task',
       context: { text: { ...task } },

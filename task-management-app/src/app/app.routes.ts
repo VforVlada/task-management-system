@@ -1,6 +1,4 @@
 import { Routes } from '@angular/router';
-import { from } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'tasks' },
@@ -8,17 +6,12 @@ export const routes: Routes = [
   {
     path: 'tasks',
     loadChildren: () =>
-      from(import('./features/tasks/routes')).pipe(
-        switchMap(m => m.TASK_ROUTES) 
-      )
+      import('./features/tasks/routes').then((m) => m.default),
   },
   {
     path: 'users',
     loadChildren: () =>
-      from(import('./features/users/routes')).pipe(
-        switchMap(m => m.USER_ROUTES)
-      )
+      import('./features/users/routes').then((m) => m.default),
   },
-
-  { path: '**', redirectTo: 'tasks' }
+  { path: '**', redirectTo: 'tasks' },
 ];

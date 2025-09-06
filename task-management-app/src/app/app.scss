@@ -6,19 +6,18 @@ nb-layout {
 nb-layout-column.page {
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
   min-height: 0;
   padding: 1rem !important;
-  box-sizing: border-box;
   overflow: hidden;
 }
 
 .page-card {
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
   flex: 1 1 auto;
   min-height: 0;
-  margin: 0;
-  box-sizing: border-box;
 }
 
 .page-card .tabs {
@@ -28,9 +27,9 @@ nb-layout-column.page {
 .page-body {
   flex: 1 1 auto;
   min-height: 0;
-  overflow: auto;
-  padding: 12px;
+  padding: 10px;
   padding-bottom: max(16px, env(safe-area-inset-bottom));
+  overflow: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable both-edges;
 }
@@ -38,22 +37,22 @@ nb-layout-column.page {
 .page-body::-webkit-scrollbar {
   width: 10px;
 }
+
 .page-body::-webkit-scrollbar-thumb {
+  background: rgb(0, 0, 0, 0.2);
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.2);
 }
 .page-body::-webkit-scrollbar-track {
   background: transparent;
 }
 
-
 nb-layout-header.header {
   background-color: #fff;
   box-shadow: none;
-  line-height: 1.8rem;
   color: #000;
   font-weight: 700;
   font-size: 1.5rem;
+  line-height: 1.8rem;
 }
 
 :host ::ng-deep nb-tabset .tabset .tab .tab-link,
@@ -63,21 +62,32 @@ nb-layout-header.header {
   text-decoration: none;
 }
 
-:host ::ng-deep nb-tabset .tabset .tab .tab-link a::before,
+:host ::ng-deep nb-tabset .tabset .tab .tab-link::before,
 :host ::ng-deep nb-tabset .tabset .tab a::before,
 :host ::ng-deep nb-tabset .tabset .tab button::before {
   background: #b1bdc6 !important;
 }
 
+:host ::ng-deep nb-tabset .tabset .tab.active .tab-link,
+:host ::ng-deep nb-tabset .tabset .tab.active a,
+:host ::ng-deep nb-tabset .tabset .tab.active button {
+  color: #4a4a4a !important;
+}
 
-:host ::ng-deep nb-tabset .tabset .tab:hover .tab-link a::before,
-:host ::ng-deep nb-tabset .tabset .tab:hover a::before,
-:host ::ng-deep nb-tabset .tabset .tab:hover button::before {
-  background: #727980 !important;
+:host ::ng-deep nb-tabset .tabset .tab.active .tab-link::before,
+:host ::ng-deep nb-tabset .tabset .tab.active a::before,
+:host ::ng-deep nb-tabset .tabset .tab.active button::before {
+  background: #4a4a4a !important;
 }
 
 :host ::ng-deep nb-tabset .tabset .tab:hover .tab-link,
 :host ::ng-deep nb-tabset .tabset .tab:hover a,
 :host ::ng-deep nb-tabset .tabset .tab:hover button {
   color: #4a4a4a !important;
+}
+
+:host ::ng-deep nb-tabset .tabset .tab:hover .tab-link::before,
+:host ::ng-deep nb-tabset .tabset .tab:hover a::before,
+:host ::ng-deep nb-tabset .tabset .tab:hover button::before {
+  background: #727980 !important;
 }

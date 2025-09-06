@@ -1,4 +1,4 @@
-import { User } from "./user.model";
+import { User } from './user.model';
 
 export enum TaskState {
   InQueue = 'in queue',
@@ -14,5 +14,5 @@ export interface Task {
   updatedAt: string;
   state: TaskState;
   assigneeId?: string;
-  user?: User
+  user?: User;
 }

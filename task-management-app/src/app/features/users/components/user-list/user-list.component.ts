@@ -1,21 +1,30 @@
-import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  OnDestroy,
+  inject,
+} from '@angular/core';
 import { AsyncPipe, CommonModule, DatePipe } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Observable, Subject, filter, map, take, takeUntil } from 'rxjs';
-import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import {
+  DragDropModule,
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
 
 import {
-  NbBadgeModule,
   NbButtonModule,
-  NbCardModule,
   NbContextMenuModule,
   NbIconModule,
   NbInputModule,
-  NbLayoutModule,
-  NbListModule,
   NbMenuService,
-  NbSidebarModule,
   NbToastrService,
+  NbCardModule,
   NbTooltipModule,
   NbWindowRef,
   NbWindowService,
@@ -35,22 +44,18 @@ import { User } from '../../../../domain/models/user.model';
     DatePipe,
     FormsModule,
     DragDropModule,
-    NbLayoutModule,
-    NbCardModule,
-    NbListModule,
     NbIconModule,
+    NbCardModule,
     NbButtonModule,
-    NbBadgeModule,
     NbTooltipModule,
     NbContextMenuModule,
     NbInputModule,
-    NbSidebarModule,
   ],
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent implements OnInit, OnDestroy {
   stateTitleMap = new Map<TaskState, string>();
   stateStyleMap = new Map<TaskState, { bg: string; color: string }>();
 
@@ -58,59 +63,74 @@ export class UserListComponent implements OnInit {
   saving = false;
 
   users$!: Observable<User[]>;
-  tasks$!: Observable<Task[]>;   
+  tasks$!: Observable<Task[]>;
   listIds: string[] = [];
   private _users: User[] = [];
 
   @ViewChild('contentTemplate') contentTemplate!: TemplateRef<any>;
 
   columns = [
-    { state: TaskState.InQueue,    title: 'In Queue',    headerBg: '#eee7ff', headerColor: '#b199e5ff' },
-    { state: TaskState.InProgress, title: 'In Progress', headerBg: '#dff4f1', headerColor: '#55bfafff' },
-    { state: TaskState.Done,       title: 'Done',        headerBg: '#e7f6df', headerColor: '#73ae53ff'  },
+    {
+      state: TaskState.InQueue,
+      title: 'In Queue',
+      headerBg: '#eee7ff',
+      headerColor: '#b199e5ff',
+    },
+    {
+      state: TaskState.InProgress,
+      title: 'In Progress',
+      headerBg: '#dff4f1',
+      headerColor: '#55bfafff',
+    },
+    {
+      state: TaskState.Done,
+      title: 'Done',
+      headerBg: '#e7f6df',
+      headerColor: '#73ae53ff',
+    },
   ];
   readonly UNASSIGNED_LIST_ID = 'list-unassigned';
 
-  userMenu = [
-    { title: 'Edit' },
-    { title: 'Delete' },
-  ];
+  userMenu = [{ title: 'Edit' }, { title: 'Delete' }];
 
   windowRef?: NbWindowRef;
 
-  constructor(
-    private toast: NbToastrService,
-    private windowService: NbWindowService,
-    private store: UsersStore,
-    private tasksStore: TasksStore,
-    private menu: NbMenuService,
-  ) {}
+  private readonly windowService = inject(NbWindowService);
+  private readonly store = inject(UsersStore);
+  private readonly tasksStore = inject(TasksStore);
+  private readonly toast = inject(NbToastrService);
+  private readonly menu = inject(NbMenuService);
 
   ngOnInit() {
     this.store.load();
-    
+
     this.users$ = this.store.users$.pipe(
-      map(users =>
+      map((users) =>
         (users ?? []).slice().sort((a, b) =>
-          (a?.name ?? '').trim().localeCompare(
-            (b?.name ?? '').trim(),
-            ['uk', 'pt', 'en'],
-            { sensitivity: 'base', ignorePunctuation: true, numeric: true },
-          ),
+          (a?.name ?? '')
+            .trim()
+            .localeCompare((b?.name ?? '').trim(), ['uk', 'pt', 'en'], {
+              sensitivity: 'base',
+              ignorePunctuation: true,
+              numeric: true,
+            }),
         ),
       ),
     );
 
-    this.users$.subscribe(users => {
+    this.users$.subscribe((users) => {
       this._users = users ?? [];
-       this.listIds = [this.UNASSIGNED_LIST_ID, ...this._users.map(u => this.getListId(u.id))];
-   
+      this.listIds = [
+        this.UNASSIGNED_LIST_ID,
+        ...this._users.map((u) => this.getListId(u.id)),
+      ];
     });
 
-    this.tasksStore.load();          
-    this.tasks$ = this.tasksStore.tasks$;  
+    this.tasksStore.load();
+    this.tasks$ = this.tasksStore.tasks$;
 
-    this.menu.onItemClick()
+    this.menu
+      .onItemClick()
       .pipe(
         takeUntil(this.destroy$),
         filter(({ tag }) => !!tag),
@@ -127,13 +147,18 @@ export class UserListComponent implements OnInit {
         }
       });
 
-    this.stateTitleMap = new Map(this.columns.map(c => [c.state, c.title]));
-    this.stateStyleMap = new Map(this.columns.map(c => [c.state, { bg: c.headerBg, color: c.headerColor }]));
+    this.stateTitleMap = new Map(this.columns.map((c) => [c.state, c.title]));
+    this.stateStyleMap = new Map(
+      this.columns.map((c) => [
+        c.state,
+        { bg: c.headerBg, color: c.headerColor },
+      ]),
+    );
   }
 
   connectedTo(currentUserId: string): string[] {
     const selfId = this.getListId(currentUserId);
-    return this.listIds.filter(id => id !== selfId);
+    return this.listIds.filter((id) => id !== selfId);
   }
 
   createUser() {
@@ -148,9 +173,9 @@ export class UserListComponent implements OnInit {
     this.users$
       .pipe(
         take(1),
-        map(list => list.find(u => String(u.id) === String(userId))),
+        map((list) => list.find((u) => String(u.id) === String(userId))),
       )
-      .subscribe(u => {
+      .subscribe((u) => {
         if (!u) return;
         this.windowRef = this.windowService.open(this.contentTemplate, {
           title: 'Edit User',
@@ -159,9 +184,8 @@ export class UserListComponent implements OnInit {
       });
   }
 
-  
   unassigned(all: any[]): Task[] {
-    return (all ?? []).filter(t => !t.assigneeId);
+    return (all ?? []).filter((t) => !t.assigneeId);
   }
 
   tasksOf(u: User): Task[] {
@@ -191,13 +215,15 @@ export class UserListComponent implements OnInit {
       state: TaskState.InQueue,
     };
 
-    this.tasksStore.update(moved.id, changes)?.pipe(take(1)).subscribe({
-      next: () => {},
-      error: () => {
-        transferArrayItem(dst, src, event.currentIndex, event.previousIndex);
-        this.toast.danger('Failed to save. Rolled back');
-      },
-    });
+    this.tasksStore
+      .update(moved.id, changes)
+      ?.pipe(take(1))
+      .subscribe({
+        error: () => {
+          transferArrayItem(dst, src, event.currentIndex, event.previousIndex);
+          this.toast.danger('Failed to save. Rolled back');
+        },
+      });
   }
 
   deleteTask(user: User) {
@@ -213,22 +239,39 @@ export class UserListComponent implements OnInit {
 
     const name = t.name?.trim();
 
-    const patch: Partial<User> = { name };
+    if (!name) return;
 
     this.saving = true;
 
-    const req = isCreate
-      ? this.store.create(patch as any)
-      : this.store.update(String(t.id), patch);
+    this.users$.pipe(take(1)).subscribe((all) => {
+      const exists = all.some(
+        (x) => x.name.trim().toLowerCase() === name.toLowerCase(),
+      );
 
-    req.subscribe({
-      next: () => { this.saving = false; this.windowRef?.close(); },
-      error: () => { this.saving = false; },
+      if (exists) {
+        this.toast.warning(`This name already exists`, 'Duplicate Task');
+        this.saving = false;
+        return;
+      }
+
+      const patch: Partial<User> = { name };
+      const req = isCreate
+        ? this.store.create(patch as any)
+        : this.store.update(String(t.id), patch);
+
+      req.subscribe({
+        next: () => {
+          this.saving = false;
+          this.windowRef?.close();
+        },
+        error: () => {
+          this.saving = false;
+        },
+      });
     });
   }
 
   private newUser(): User {
-    const now = new Date().toISOString();
     return {
       id: crypto.randomUUID(),
       name: '',

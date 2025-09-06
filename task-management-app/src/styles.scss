@@ -1,19 +1,9 @@
-@use '@nebular/theme/styles/theming' as *;
-@use '@nebular/theme/styles/themes/default';
-@use '@nebular/theme/styles/globals' as *;
-
-@include nb-install() {
-  @include nb-theme-global();
-
-  body {
-    font-family: 'Roboto', sans-serif;
-  }
-}
+@use "./app/shared/styles/partial" as *;
 
 nb-layout .layout,
 nb-layout .layout-container,
 nb-layout nb-layout-column {
   height: 100%;
-  overflow: hidden;   
-  padding: 0;        
+  overflow: hidden;
+  padding: 0;
 }
